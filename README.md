@@ -1,4 +1,4 @@
-# Projet 7 : Implémentation d'un modèle de scoring 
+# Projet : Implémentation d'un modèle de scoring 
 
 **Autor :** Louis BIRENHOLZ  
 **Date :** 04/05/2020  
@@ -21,8 +21,11 @@ On accorde une importance particulière à la phase de cleaning des données du 
 - Création d'une custom metric adaptée à la problématique métier (pénalisaition forte des faux négatifs)
 - Oversampling avec **SMOTE**
 - Interprétabilité des modèles avec **LIME** & **SHAP**
-- Création d'un dashboard intéractif pour le client avec Streamlit, Seaborn, Plotly & Pickle
+- Création d'un dashboard intéractif pour le client avec **Streamlit**, **Seaborn**, **Plotly** & **Pickle** déployé via **Heroku**.
 
+## Dashboard :
+
+Ce dashboard est disponible dans le Repo associé sur mon Github (https://github.com/Louis-bir/dashboard-project-credits.app)
 
 ## Overview performances :
 
