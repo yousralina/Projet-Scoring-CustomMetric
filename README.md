@@ -19,12 +19,12 @@ On accorde une importance particulière à la phase de cleaning des données du 
 - Imputation & Standardisation
 - Classification avec Régression Logistique (baseline), RandomForestClassifier, LightGBM 
 - Création d'une custom metric adaptée à la problématique métier (pénalisaition forte des faux négatifs)
-- Oversampling avec SMOTE
-- Interprétabilité des modèles avec LIME & SHAP 
+- Oversampling avec **SMOTE**
+- Interprétabilité des modèles avec **LIME** & **SHAP**
 - Création d'un dashboard intéractif pour le client avec Streamlit, Seaborn, Plotly & Pickle
 
 
-## Overview :
+## Overview performances :
 
 Le modèle final que j'ai sélectionné donne les performances suivantes :
 
