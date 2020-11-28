@@ -1,8 +1,8 @@
 # Projet 7 : Implémentation d'un modèle de scoring 
 
-**Autor :** Louis BIRENHOLZ
-**Date :** 04/05/2020
-**Durée totale du projet :** 110 heures
+**Autor :** Louis BIRENHOLZ  
+**Date :** 04/05/2020  
+**Durée totale du projet :** 110 heures  
 
 ## Background du projet :
 
@@ -14,14 +14,14 @@ On accorde une importance particulière à la phase de cleaning des données du 
 
 ## Key points du projet :
 
-..* Cleaning & Undersampling de la classe majoritaire 
---* Feature Engineering & OHE
---* Imputation & Standardisation
---* Classification avec Régression Logistique (baseline), RandomForestClassifier, LightGBM 
---* Création d'une custom metric adaptée à la problématique métier (pénalisaition forte des faux négatifs)
---* Oversampling avec SMOTE
---* Interprétabilité des modèles avec LIME & SHAP 
---* Création d'un dashboard intéractif pour le client avec Streamlit, Seaborn, Plotly & Pickle
+- Cleaning & Undersampling de la classe majoritaire 
+- Feature Engineering & OHE
+- Imputation & Standardisation
+- Classification avec Régression Logistique (baseline), RandomForestClassifier, LightGBM 
+- Création d'une custom metric adaptée à la problématique métier (pénalisaition forte des faux négatifs)
+- Oversampling avec SMOTE
+- Interprétabilité des modèles avec LIME & SHAP 
+- Création d'un dashboard intéractif pour le client avec Streamlit, Seaborn, Plotly & Pickle
 
 
 ## Overview :
