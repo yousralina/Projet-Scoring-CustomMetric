@@ -21,7 +21,8 @@ On accorde une importance particulière à la phase de cleaning des données du 
 - Création d'une custom metric adaptée à la problématique métier (pénalisaition forte des faux négatifs)
 - Oversampling avec **SMOTE**
 - Interprétabilité des modèles avec **LIME** & **SHAP**
-- Création d'un dashboard intéractif pour le client avec **Streamlit**, **Seaborn**, **Plotly** & **Pickle** déployé via **Heroku**.
+- Création d'un dashboard intéractif pour le client avec **Streamlit**, **Seaborn**, **Plotly** & **Pickle**  
+- Déploiement du Dashboard dans le cloud d'**Heroku**  
 
 ## Dashboard :
 
