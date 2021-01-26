@@ -2,7 +2,8 @@
 
 **Autor :** Louis BIRENHOLZ  
 **Date :** 04/05/2020  
-**Durée totale du projet :** 110 heures  
+**Durée totale du projet :** 110 heures
+**Vidéo :** https://www.youtube.com/watch?v=RLGKGFu-9aE&feature=emb_title  
 
 ## Background du projet :
 
