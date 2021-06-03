@@ -7,7 +7,7 @@
 
 ## Background du projet :
 
-Pour ce projet, nous nous plaçons en tant que Data Scientist au sein d'une société financière qui propose des **crédits à la consommation** pour des personnes ayant peu ou pas du tout d'historique de prêt.
+Pour ce projet, nous nous positionnons en tant que Data Scientist au sein d'une société financière qui propose des **crédits à la consommation** pour des personnes ayant peu ou pas du tout d'historique de prêt.
 
 Notre entreprise souhaite développer **un modèle de scoring** de la probabilité de défaut de paiement du client. Aussi, nous voulons créer un **dashboard interactif** pour que les chargés de relation client puissent à la fois expliquer de façon la plus transparente possible les décisions d’octroi de crédit.
 
