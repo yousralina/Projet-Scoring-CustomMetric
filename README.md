@@ -23,7 +23,11 @@ On accorde une importance particulière à la phase de cleaning des données du 
 - Oversampling avec **SMOTE**
 - Interprétabilité des modèles avec **LIME** & **SHAP**
 - Création d'un dashboard intéractif pour le client avec **Streamlit**, **Seaborn**, **Plotly** & **Pickle**  
-- Déploiement du Dashboard dans le cloud d'**Heroku**  
+- Déploiement du Dashboard via Docker et Google Cloud Platform
+
+## Data :
+
+Les données du projet sont disponibles ici : https://www.kaggle.com/competitions/home-credit-default-risk
 
 ## Dashboard :
 
