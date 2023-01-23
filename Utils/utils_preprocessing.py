@@ -12,9 +12,11 @@ from sklearn import metrics
 from sklearn.metrics import accuracy_score, precision_score
 from sklearn.metrics import f1_score, recall_score, roc_auc_score
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from category_encoders.target_encoder import TargetEncoder
 
 # Stats
-from scipy.stats import spearmanr, f_oneway, pearsonr
+from scipy.stats import spearmanr, f_oneway, pearsonr, chi2_contingency
 
 # Others.
 from typing import List
@@ -36,7 +38,7 @@ def missing_values_table(df: pd.DataFrame) -> pd.DataFrame :
         # Make a table with the results
         mis_val_table = pd.concat([mis_val, mis_val_percent], axis=1)
         mis_val_table = pd.DataFrame({"Missing_values": mis_val, 
-                                      "% of total values": mis_val_percent,
+                                      "% of Total Values": mis_val_percent,
                                       "Feature_type": df.dtypes})
 
         # Print some summary information
@@ -58,13 +60,10 @@ def show_miss_values(df):
 
 
 
-def check_correlation_classif_task(input_df: pd.DataFrame, 
-                                   target: str, 
-                                   threshold_categ: float = 0.001,
-                                   threshold_num: float = 0.8,
-                                   verbosity: int = 0) -> None :
+def check_correlation_classif_task_continuous(input_df: pd.DataFrame, 
+                                              target: str) -> pd.DataFrame:
 
-   """This function print P Values after ANOVA test between categorical features and target. 
+   """This function print P Values after ANOVA test between a continuous features and target. 
       It does the same job for Pearson coefficient between numerical features dans target."""
 
    # Delete NaN and fixe target to str type.
@@ -72,10 +71,9 @@ def check_correlation_classif_task(input_df: pd.DataFrame,
    df_wo_nan[target] = df_wo_nan[target].apply(lambda x : str(x))
 
    # Split in categorical and numerical features.
-   cat_features = df_wo_nan.select_dtypes(exclude=["float64","int64"]).columns.tolist()
    numerical_features = df_wo_nan.select_dtypes(exclude=["category","object"]).columns.tolist()
-   cat_features.remove(target)
 
+   # Initialize a dict to store results of ANOVA test.
    dict_anova = {}
 
    for i in numerical_features:
@@ -86,7 +84,37 @@ def check_correlation_classif_task(input_df: pd.DataFrame,
       AnovaResults = f_oneway(*CategoryGroupLists)
       dict_anova[i] = AnovaResults[1]
 
-   return pd.DataFrame(pd.Series(dict_anova), columns=["P value"]).sort_values(by="P value")
+   return pd.DataFrame(pd.Series(dict_anova), columns=["P-value"]).sort_values(by="P-value")
+
+
+
+def check_correlation_classif_task_categorical(input_df: pd.DataFrame, 
+                                               target: str) -> pd.DataFrame:
+
+   """This function print P Values after ANOVA test between categorical features and target. 
+      It does the same job for Pearson coefficient between numerical features dans target."""
+
+   # Delete NaN and fixe target to str type.
+   df_wo_nan = input_df[input_df[target] != np.nan]
+   df_wo_nan[target] = df_wo_nan[target].apply(lambda x : str(x))
+
+   # Split in categorical and numerical features.
+   cat_features = df_wo_nan.select_dtypes(exclude=["float64","int64"]).columns.tolist()
+   cat_features.remove(target)
+
+   dict_test = {i: [] for i in cat_features}
+
+   for i in cat_features:
+      df_courant = df_wo_nan[[i, target]]
+      df_courant.dropna(inplace=True)
+
+      contingency_table = pd.crosstab(df_courant.TARGET, df_courant[i])
+      n = contingency_table.sum().sum()
+      chi2, p, dof, expected = chi2_contingency(contingency_table)
+      v = chi2/n
+      dict_test[i].extend([v, p])
+
+   return pd.DataFrame(dict_test, index=["V Cramer", "Chi-deux P-value"]).T.sort_values(by="Cramer coeff", ascending=False)
 
 
 
@@ -126,9 +154,5 @@ def impute_cat_feature(X_train, X_test, y, threshold_deletion=0.5, strategy="mos
         df_cat_encoded_train = pd.DataFrame(encoder_technique.fit_transform(df_imputed_cat_features_train, y))
         df_cat_encoded_test = pd.DataFrame(encoder_technique.transform(df_imputed_cat_features_test))
 
-    # Reindex imputed data.
-    df_cat_encoded_train.index = X_train[numerical_features].index
-    df_cat_encoded_test.index = X_test[numerical_features].index
-
     # Return Imputed and Encoded Df.
-    return pd.concat([df_cat_encoded_train, X_train[numerical_features]], axis=1), pd.concat([df_cat_encoded_test, X_test[numerical_features]], axis=1)
+    return df_cat_encoded_train, df_cat_encoded_test
