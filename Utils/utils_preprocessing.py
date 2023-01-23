@@ -11,6 +11,7 @@ import plotly.express as px
 from sklearn import metrics
 from sklearn.metrics import accuracy_score, precision_score
 from sklearn.metrics import f1_score, recall_score, roc_auc_score
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, OneHotEncoder
 
 # Stats
 from scipy.stats import spearmanr, f_oneway, pearsonr
@@ -30,27 +31,21 @@ def missing_values_table(df: pd.DataFrame) -> pd.DataFrame :
         mis_val = df.isnull().sum()
         
         # Percentage of missing values
-        mis_val_percent = 100 * df.isnull().sum() / len(df)
+        mis_val_percent = np.round(100 * df.isnull().sum() / len(df), 2)
         
         # Make a table with the results
         mis_val_table = pd.concat([mis_val, mis_val_percent], axis=1)
-        
-        # Rename the columns
-        mis_val_table_ren_columns = mis_val_table.rename(
-        columns = {0 : 'Missing Values', 1 : '% of Total Values'})
-        
-        # Sort the table by percentage of missing descending
-        mis_val_table_ren_columns = mis_val_table_ren_columns[
-            mis_val_table_ren_columns.iloc[:,1] != 0].sort_values(
-        '% of Total Values', ascending=False).round(1)
-        
+        mis_val_table = pd.DataFrame({"Missing_values": mis_val, 
+                                      "% of total values": mis_val_percent,
+                                      "Feature_type": df.dtypes})
+
         # Print some summary information
         print ("Your selected dataframe has " + str(df.shape[1]) + " columns.\n"      
-            "There are " + str(mis_val_table_ren_columns.shape[0]) +
-              " columns that have missing values.")
+               "There are " + str(mis_val_table[mis_val_table.Missing_values != 0].shape[0]) +
+               " columns that have missing values.")
         
         # Return the dataframe with missing information
-        return mis_val_table_ren_columns
+        return mis_val_table.sort_values(by="Missing_values", ascending=False)
 
 
 def show_miss_values(df):
@@ -58,7 +53,7 @@ def show_miss_values(df):
     df_miss_values = missing_values_table(df)
 
     fig = px.histogram(df_miss_values, x="% of Total Values", nbins=20)
-    fig.update_layout(width=800, height=450, title="Missing values check")
+    fig.update_layout(width=800, height=450, title="Missing values check", template="plotly_dark")
     fig.show()
 
 
@@ -92,3 +87,48 @@ def check_correlation_classif_task(input_df: pd.DataFrame,
       dict_anova[i] = AnovaResults[1]
 
    return pd.DataFrame(pd.Series(dict_anova), columns=["P value"]).sort_values(by="P value")
+
+
+
+def impute_cat_feature(X_train, X_test, y, threshold_deletion=0.5, strategy="most_frequent", encoder="OneHotEncoder"):
+
+    """This function impute and encode the categorical features for the X given in argument.
+       You can choose 3 different types of encoding: OneHotEncoder, OrdinalEncoder, TargerEncoder
+       
+       It returns, X_train and X_test encoded and imputed for categorical features"""
+
+    # Split numerical/categorical features.
+    cat_features = X_train.select_dtypes(exclude=["float64","int64"]).columns.tolist()
+    numerical_features = X_train.select_dtypes(exclude=["category","object"]).columns.tolist()
+
+    # Delete too sparse features for training set.
+    serie_ratio_nan = (X_train[cat_features].isna().sum() / X_train.shape[0])
+    new_cat_features = [i for i in cat_features if i not in serie_ratio_nan[serie_ratio_nan > threshold_deletion].index]
+
+    # Imputation for training and testing set.
+    imp_cat_features = SimpleImputer(missing_values=np.nan, strategy=strategy)
+    df_imputed_cat_features_train = imp_cat_features.fit_transform(X_train[new_cat_features])
+    df_imputed_cat_features_test = imp_cat_features.transform(X_test[new_cat_features])
+
+    # Define encoder.
+    if encoder == "OneHotEncoder":
+        encoder_technique = OneHotEncoder(handle_unknown = 'ignore')
+        df_cat_encoded_train = pd.DataFrame(encoder_technique.fit_transform(df_imputed_cat_features_train).toarray())
+        df_cat_encoded_test = pd.DataFrame(encoder_technique.transform(df_imputed_cat_features_test).toarray())
+
+    if encoder == "OrdinalEncoder":
+        encoder_technique = OrdinalEncoder()
+        df_cat_encoded_train = pd.DataFrame(encoder_technique.fit_transform(df_imputed_cat_features_train))
+        df_cat_encoded_test = pd.DataFrame(encoder_technique.transform(df_imputed_cat_features_test))
+
+    if encoder == "TargetEncoder":
+        encoder_technique = TargetEncoder()
+        df_cat_encoded_train = pd.DataFrame(encoder_technique.fit_transform(df_imputed_cat_features_train, y))
+        df_cat_encoded_test = pd.DataFrame(encoder_technique.transform(df_imputed_cat_features_test))
+
+    # Reindex imputed data.
+    df_cat_encoded_train.index = X_train[numerical_features].index
+    df_cat_encoded_test.index = X_test[numerical_features].index
+
+    # Return Imputed and Encoded Df.
+    return pd.concat([df_cat_encoded_train, X_train[numerical_features]], axis=1), pd.concat([df_cat_encoded_test, X_test[numerical_features]], axis=1)
