@@ -114,7 +114,7 @@ def check_correlation_classif_task_categorical(input_df: pd.DataFrame,
       v = chi2/n
       dict_test[i].extend([v, p])
 
-   return pd.DataFrame(dict_test, index=["V Cramer", "Chi-deux P-value"]).T.sort_values(by="Cramer coeff", ascending=False)
+   return pd.DataFrame(dict_test, index=["Cramer coeff", "Chi-deux P-value"]).T.sort_values(by="Cramer coeff", ascending=False)
 
 
 
